@@ -10,14 +10,11 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Noto+Serif+Balinese&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Times+New+Roman&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Serif+Balinese&family=Times+New+Roman&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- html2pdf.js & html2canvas for PDF and Image Generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- html2canvas for Client-Side Image Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- QRCodeJS for Dynamic Verification QR Code -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -26,8 +23,6 @@
                     fontFamily: {
                         sans: ['Plus Jakarta Sans', 'sans-serif'],
                         serif: ['Times New Roman', 'Times', 'serif'],
-                        garamond: ['Cormorant Garamond', 'Times New Roman', 'serif'],
-                        cinzel: ['Cinzel', 'serif'],
                         balinese: ['Noto Serif Balinese', 'Times New Roman', 'serif']
                     },
                     colors: {
@@ -75,7 +70,7 @@
             background-color: #1e293b;
         }
 
-        /* Printable Document Dimensions & Aesthetic Enhancements */
+        /* Printable Document Dimensions & Aesthetics */
         .a4-paper {
             width: 210mm;
             min-height: 297mm;
@@ -83,46 +78,65 @@
             color: #0f172a;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             margin: 0 auto;
-            padding: 15mm 18mm 18mm 18mm;
+            padding: 12mm 15mm 15mm 15mm;
             box-sizing: border-box;
             font-family: 'Times New Roman', Times, serif;
             position: relative;
-            background-image: radial-gradient(#cbd5e1 0.75px, transparent 0.75px);
-            background-size: 24px 24px;
+            overflow: hidden;
         }
 
-        /* Formal Border Frame Variants */
-        .paper-frame-double {
-            border: 1px solid #0f172a;
-            outline: 3px double #0f172a;
-            outline-offset: 4px;
-        }
-
-        .paper-frame-ornament {
-            border: 2px solid #1e293b;
-            padding: 12mm 14mm !important;
+        /* Document Ornate Border Frame */
+        .doc-border-frame {
+            border: 2px solid #0f172a;
+            padding: 4px;
+            height: 100%;
             position: relative;
         }
-        .paper-frame-ornament::before {
-            content: '';
-            position: absolute;
-            inset: 6px;
-            border: 1px solid #64748b;
-            pointer-events: none;
+
+        .doc-border-inner {
+            border: 1px solid #94a3b8;
+            padding: 16px 20px;
+            min-height: 260mm;
+            position: relative;
+            background: #ffffff;
         }
 
-        /* Official Watermark Background */
+        /* Subtle Background Watermark */
         .doc-watermark {
             position: absolute;
-            inset: 0;
+            top: 52%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            height: 320px;
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Verification Stamp Effect */
+        .digital-stamp {
+            width: 90px;
+            height: 90px;
+            border: 2px dashed #0284c7;
+            border-radius: 50%;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            pointer-events: none;
-            opacity: 0.045;
-            user-select: none;
-            z-index: 0;
-            overflow: hidden;
+            color: #0369a1;
+            text-align: center;
+            font-size: 8px;
+            font-weight: bold;
+            transform: rotate(-12deg);
+            background: rgba(224, 242, 254, 0.25);
+            box-shadow: inset 0 0 0 2px rgba(2, 132, 199, 0.15);
+            margin: auto;
+        }
+
+        /* Toast Notification Styling */
+        #custom-toast {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* Print Override */
@@ -145,7 +159,6 @@
                 margin: 0;
                 padding: 10mm 12mm;
                 box-shadow: none !important;
-                background-image: none !important;
             }
             .no-print {
                 display: none !important;
@@ -159,13 +172,13 @@
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-full flex flex-col selection:bg-emerald-500 selection:text-slate-950">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-full flex flex-col">
 
     <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-cyan-400 flex items-center justify-center text-white shadow-lg shadow-emerald-900/40">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center text-white shadow-lg shadow-emerald-900/40">
                         <i class="fa-solid fa-file-contract text-xl"></i>
                     </div>
                     <div>
@@ -181,9 +194,9 @@
                         <span>Folder Drive Tujuan</span>
                         <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-400"></i>
                     </a>
-                    <button id="btn-fill-sample" onclick="fillSampleData()" class="px-3.5 py-1.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700 text-xs font-semibold text-emerald-300 transition-all flex items-center gap-1.5 shadow-md shadow-emerald-950/50">
-                        <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
-                        <span>Isi Contoh Data</span>
+                    <button id="btn-fill-sample" onclick="fillSampleData()" class="px-3 py-1.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700 text-xs font-semibold text-emerald-300 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>Isi Contoh Data Gambar</span>
                     </button>
                 </div>
             </div>
@@ -199,8 +212,8 @@
                 <span>1. Form Input Data</span>
             </button>
             <button id="tab-preview-btn" onclick="switchTab('preview')" class="px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition-all whitespace-nowrap">
-                <i class="fa-solid fa-file-pdf"></i>
-                <span>2. Hasil Cetak Elegan (A4)</span>
+                <i class="fa-solid fa-file-image"></i>
+                <span>2. Hasil Dokumen (A4)</span>
             </button>
             <button id="tab-history-btn" onclick="switchTab('history')" class="px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition-all whitespace-nowrap">
                 <i class="fa-solid fa-box-archive"></i>
@@ -209,59 +222,18 @@
             </button>
         </div>
 
-        <!-- FORM TAB -->
         <section id="tab-form" class="space-y-6">
-            <!-- Header Hero Banner with Vector Decorative Motif -->
-            <div class="bg-gradient-to-r from-slate-900 via-emerald-950/40 to-slate-900 border border-slate-800 rounded-2xl p-6 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
-                <div class="absolute -right-10 -top-10 text-emerald-500/10 pointer-events-none">
-                    <svg width="260" height="260" viewBox="0 0 200 200" fill="currentColor">
-                        <circle cx="100" cy="100" r="90" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="8 6"/>
-                        <circle cx="100" cy="100" r="70" fill="none" stroke="currentColor" stroke-width="1.5"/>
-                        <path d="M100 10 L100 190 M10 100 L190 100" stroke="currentColor" stroke-width="1"/>
-                        <polygon points="100,30 120,80 170,80 130,110 145,160 100,130 55,160 70,110 30,80 80,80" fill="none" stroke="currentColor" stroke-width="1.5"/>
-                    </svg>
-                </div>
-                
-                <div class="relative z-10 max-w-2xl">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-2">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <span>Sistem E-Berita Acara Resmi SMKN 1 Bebandem</span>
-                    </div>
-                    <h2 class="text-xl md:text-2xl font-bold text-white tracking-tight">Penyusunan & Verifikasi Berita Acara PKL/DUDI</h2>
-                    <p class="text-xs md:text-sm text-slate-300 mt-1 leading-relaxed">
-                        Lengkapi formulir di bawah ini untuk menghasilkan dokumen cetak A4 resmi lengkap dengan watermark autentik, tanda tangan digital, serta QR Verification Seal.
-                    </p>
-                </div>
-
-                <div class="relative z-10 flex items-center gap-3 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80">
-                    <div class="w-12 h-12 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl">
-                        <i class="fa-solid fa-stamp"></i>
-                    </div>
-                    <div>
-                        <span class="text-[11px] uppercase tracking-wider text-slate-400 font-medium">Status Berkas</span>
-                        <p class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                            Siap Dibuat & Diverifikasi
-                        </p>
-                    </div>
-                </div>
-            </div>
-
             <form id="beritaAcaraForm" onsubmit="event.preventDefault(); handleKirim();" class="space-y-6">
                 
-                <!-- Section 1: Informasi Guru & Program -->
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-6 shadow-xl relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-1.5 h-full bg-emerald-500"></div>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-user-tie text-emerald-400"></i>
-                            <h2 class="text-base font-bold text-white uppercase tracking-wider">Informasi Guru & Program</h2>
-                        </div>
-                        <span class="text-[11px] text-slate-400 font-mono">BAGIAN 01</span>
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-user-tie text-emerald-400"></i>
+                        <h2 class="text-base font-bold text-white uppercase tracking-wider">Informasi Guru & Program</h2>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                        <!-- Nama Guru -->
+                        <!-- Nama Guru / Pembimbing -->
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
                                 Nama Guru Pembimbing <span class="text-rose-400">*</span>
@@ -270,7 +242,7 @@
                                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
                                     <i class="fa-solid fa-chalkboard-user"></i>
                                 </span>
-                                <input type="text" id="namaGuru" required placeholder="Contoh: I Nyoman Dwitika Adi Ana" oninput="updateLivePreview()"
+                                <input type="text" id="namaGuru" required placeholder="Contoh: I Nyoman Dwitika Adi Ana"
                                     class="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all placeholder:text-slate-600">
                             </div>
                         </div>
@@ -284,7 +256,7 @@
                                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
                                     <i class="fa-solid fa-id-card"></i>
                                 </span>
-                                <input type="text" id="nipGuru" required placeholder="Contoh: 198410182009021003" oninput="updateLivePreview()"
+                                <input type="text" id="nipGuru" required placeholder="Contoh: 198410182009021003"
                                     class="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all placeholder:text-slate-600">
                             </div>
                         </div>
@@ -298,7 +270,7 @@
                                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
                                     <i class="fa-solid fa-layer-group"></i>
                                 </span>
-                                <select id="program" required onchange="updateLivePreview()"
+                                <select id="program" required
                                     class="w-full pl-10 pr-10 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
                                     <option value="PKL">PKL (Praktik Kerja Lapangan)</option>
                                     <option value="BELAJAR DI DUDI">BELAJAR DI DUDI</option>
@@ -318,11 +290,11 @@
                                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
                                     <i class="fa-solid fa-hashtag"></i>
                                 </span>
-                                <input type="text" id="nomorSurat" required placeholder="Contoh: PKL-BelajarDUDI/01/IX/2026" oninput="updateLivePreview()"
+                                <input type="text" id="nomorSurat" required placeholder="Contoh: No. PKL-BelajarDUDI/01/IX/2026"
                                     class="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all placeholder:text-slate-600">
                             </div>
                             <p class="text-[11px] text-emerald-400 mt-1 font-mono">
-                                Pratinjau No. Surat: <span id="formatNoSuratPreview">PKL-BelajarDUDI/01/IX/2026</span>
+                                Format Otomatis: <span id="formatNoSuratPreview">No. PKL-BelajarDUDI/01/IX/2026</span>
                             </p>
                         </div>
 
@@ -335,7 +307,7 @@
                                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
                                     <i class="fa-solid fa-calendar-day"></i>
                                 </span>
-                                <input type="date" id="tanggalKegiatan" required onchange="updateLivePreview()"
+                                <input type="date" id="tanggalKegiatan" required
                                     class="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all">
                             </div>
                         </div>
@@ -349,7 +321,7 @@
                                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
                                     <i class="fa-solid fa-location-dot"></i>
                                 </span>
-                                <input type="text" id="kotaTerbit" required placeholder="Contoh: Karangasem" value="Karangasem" oninput="updateLivePreview()"
+                                <input type="text" id="kotaTerbit" required placeholder="Contoh: Karangasem" value="Karangasem"
                                     class="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all placeholder:text-slate-600">
                             </div>
                         </div>
@@ -363,12 +335,12 @@
                                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
                                     <i class="fa-solid fa-bullseye"></i>
                                 </span>
-                                <select id="tujuan" required onchange="updateLivePreview()"
+                                <select id="tujuan" required
                                     class="w-full pl-10 pr-10 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
-                                    <option value="Monitoring siswa PKL">Monitoring siswa PKL</option>
+                                    <option value="Monitoring siswa PKL siswa">Monitoring siswa PKL siswa</option>
                                     <option value="MONITORING RUTIN SISWA">MONITORING RUTIN SISWA</option>
-                                    <option value="PENYERAHAN SISWA PKL">PENYERAHAN SISWA PKL</option>
-                                    <option value="PENARIKAN SISWA PKL">PENARIKAN SISWA PKL</option>
+                                    <option value="PENYERAHAN SISWA">PENYERAHAN SISWA</option>
+                                    <option value="PENARIKAN SISWA">PENARIKAN SISWA</option>
                                 </select>
                                 <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none text-slate-500">
                                     <i class="fa-solid fa-chevron-down text-xs"></i>
@@ -378,15 +350,11 @@
                     </div>
                 </div>
 
-                <!-- Section 2: Informasi DUDI -->
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-6 shadow-xl relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-1.5 h-full bg-teal-500"></div>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-building text-teal-400"></i>
-                            <h2 class="text-base font-bold text-white uppercase tracking-wider">Informasi Dunia Usaha / Industri (DUDI)</h2>
-                        </div>
-                        <span class="text-[11px] text-slate-400 font-mono">BAGIAN 02</span>
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-building text-teal-400"></i>
+                        <h2 class="text-base font-bold text-white uppercase tracking-wider">Informasi Dunia Usaha / Industri (DUDI)</h2>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
@@ -399,7 +367,7 @@
                                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
                                     <i class="fa-solid fa-industry"></i>
                                 </span>
-                                <input type="text" id="namaDudi" required placeholder="Contoh: Atyana" oninput="updateLivePreview()"
+                                <input type="text" id="namaDudi" required placeholder="Contoh: Atyana"
                                     class="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all placeholder:text-slate-600">
                             </div>
                         </div>
@@ -413,34 +381,29 @@
                                 <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-500">
                                     <i class="fa-solid fa-map-location-dot"></i>
                                 </span>
-                                <input type="text" id="alamatDudi" required placeholder="Contoh: Jalan Karangasem-Denpasar, Candi Dasa, Manggis" oninput="updateLivePreview()"
+                                <input type="text" id="alamatDudi" required placeholder="Contoh: Jalan Karangasem-Denpasar, Candi Dasa, Manggis"
                                     class="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all placeholder:text-slate-600">
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Section 3: Catatan Monitoring -->
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-6 shadow-xl relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-1.5 h-full bg-cyan-500"></div>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-clipboard-list text-cyan-400"></i>
-                            <h2 class="text-base font-bold text-white uppercase tracking-wider">Catatan Monitoring</h2>
-                        </div>
-                        <span class="text-[11px] text-slate-400 font-mono">BAGIAN 03</span>
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-clipboard-list text-cyan-400"></i>
+                        <h2 class="text-base font-bold text-white uppercase tracking-wider">Catatan Monitoring</h2>
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
                             Isi Catatan <span class="text-rose-400">*</span>
                         </label>
-                        <textarea id="catatan" rows="3" required placeholder="Contoh: Monitoring berjalan lancar. Siswa disiplin dan mengikuti instruksi kerja dengan baik." oninput="updateLivePreview()"
+                        <textarea id="catatan" rows="3" required placeholder="Contoh: Monitoring dilakukan dengan baik, tanpa ada permasalahan siswa"
                             class="w-full p-3.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all placeholder:text-slate-600"></textarea>
                     </div>
                 </div>
 
-                <!-- Section 4: Digital Signatures -->
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-6 shadow-xl relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-1.5 h-full bg-indigo-500"></div>
                     <div class="flex items-center justify-between mb-4">
@@ -464,7 +427,7 @@
 
                             <div>
                                 <label class="block text-xs font-semibold text-slate-400 mb-1">Nama Instruktur <span class="text-rose-400">*</span></label>
-                                <input type="text" id="namaInstruktur" required placeholder="Contoh: I Nyoman Tombos" oninput="updateLivePreview()"
+                                <input type="text" id="namaInstruktur" required placeholder="Contoh: I Nyoman Tombos"
                                     class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
                             </div>
 
@@ -490,7 +453,7 @@
 
                             <div>
                                 <label class="block text-xs font-semibold text-slate-400 mb-1">Nama Guru Pembimbing <span class="text-rose-400">*</span></label>
-                                <input type="text" id="namaPembimbing" required placeholder="Contoh: I Nyoman Dwitika Adi Ana" oninput="updateLivePreview()"
+                                <input type="text" id="namaPembimbing" required placeholder="Contoh: I Nyoman Dwitika Adi Ana"
                                     class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
                             </div>
 
@@ -508,7 +471,6 @@
                     </div>
                 </div>
 
-                <!-- Form Action Buttons -->
                 <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4 border-t border-slate-800 no-print">
                     <button type="button" onclick="resetForm()" class="w-full sm:w-auto px-5 py-3 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold text-sm transition-all flex items-center justify-center gap-2">
                         <i class="fa-solid fa-rotate text-slate-400"></i>
@@ -520,11 +482,6 @@
                         <span>UNDUH GAMBAR (PNG)</span>
                     </button>
 
-                    <button type="button" onclick="generateAndPrintPDF()" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-lg shadow-indigo-900/30 transition-all flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-print"></i>
-                        <span>CETAK / DOWNLOAD PDF</span>
-                    </button>
-
                     <button type="submit" class="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm shadow-lg shadow-emerald-900/40 transition-all flex items-center justify-center gap-2">
                         <i class="fa-solid fa-paper-plane"></i>
                         <span>KIRIM & SIMPAN</span>
@@ -534,337 +491,218 @@
             </form>
         </section>
 
-        <!-- PREVIEW TAB (ELEGANT A4 WITH VECTOR ORNAMENTS) -->
         <section id="tab-preview" class="hidden">
-            <!-- Customization & Download Bar -->
-            <div class="mb-4 bg-slate-900 p-4 rounded-2xl border border-slate-800 no-print flex flex-col lg:flex-row items-center justify-between gap-4 shadow-xl">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
-                        <i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-bold text-white">Desain Cetak Dokumen Resmi Elegan</h3>
-                        <p class="text-xs text-slate-400">Gaya bingkai ukiran Bali, stempel autentikasi, dan tata letak berstandar dinas.</p>
-                    </div>
+            <div class="mb-4 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900 p-4 rounded-xl border border-slate-800 no-print">
+                <div class="text-sm text-slate-300 flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Tampilan Dokumen Resmi A4 dengan Bingkai Elegan & Validasi Digital.</span>
                 </div>
-
-                <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
-                    <!-- Style Selector -->
-                    <div class="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
-                        <span class="px-2 text-slate-400 font-medium">Bingkai:</span>
-                        <button type="button" onclick="setDocFrame('ornament')" id="btn-frame-ornament" class="px-2.5 py-1 rounded-lg font-semibold bg-emerald-600 text-white transition-all">Ukiran Resmi</button>
-                        <button type="button" onclick="setDocFrame('double')" id="btn-frame-double" class="px-2.5 py-1 rounded-lg font-semibold text-slate-400 hover:text-slate-200 transition-all">Garis Ganda</button>
-                        <button type="button" onclick="setDocFrame('none')" id="btn-frame-none" class="px-2.5 py-1 rounded-lg font-semibold text-slate-400 hover:text-slate-200 transition-all">Polos</button>
-                    </div>
-
-                    <!-- Toggle Seal Badge -->
-                    <button type="button" onclick="toggleQRSeal()" id="btn-toggle-qr" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 text-xs font-semibold rounded-xl transition-all flex items-center gap-1.5">
-                        <i class="fa-solid fa-qrcode text-sm"></i>
-                        <span id="qr-seal-label">Sembunyikan Cap & QR</span>
+                <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                    <button onclick="downloadAsImage()" class="flex-1 sm:flex-none px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-purple-950/40">
+                        <i class="fa-solid fa-file-image"></i> Unduh Gambar (PNG)
                     </button>
-
-                    <!-- Export Actions -->
-                    <button type="button" onclick="downloadAsImage()" class="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-purple-900/30">
-                        <i class="fa-solid fa-file-image"></i> PNG
-                    </button>
-                    <button type="button" onclick="generateAndPrintPDF()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-900/30">
-                        <i class="fa-solid fa-print"></i> Cetak / PDF
-                    </button>
+                    <a href="https://drive.google.com/drive/folders/19DpURTEciTt0gz6H76ehDFQjICkCxMS7?usp=sharing" target="_blank" rel="noopener noreferrer"
+                       class="flex-1 sm:flex-none px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-lg border border-slate-700 transition-all flex items-center justify-center gap-1.5">
+                        <i class="fa-brands fa-google-drive text-emerald-400"></i> Google Drive
+                    </a>
                 </div>
             </div>
 
             <!-- Paper Wrapper -->
-            <div class="a4-container py-4 flex justify-center">
-                <div id="pdf-document-paper" class="a4-paper paper-frame-ornament font-serif text-slate-900 relative overflow-hidden">
+            <div class="a4-container py-4">
+                <div id="pdf-document-paper" class="a4-paper font-serif text-black relative">
                     
-                    <!-- 1. CORNER FILIGREE ORNAMENTS (4 Corners SVG) -->
-                    <div id="doc-corner-ornaments" class="absolute inset-0 pointer-events-none z-10">
-                        <!-- Top-Left Corner -->
-                        <svg class="absolute top-2 left-2 text-slate-800 opacity-80" width="54" height="54" viewBox="0 0 100 100" fill="none" stroke="currentColor">
-                            <path d="M5,5 L95,5 L95,15 L15,15 L15,95 L5,95 Z" fill="currentColor" opacity="0.15"/>
-                            <path d="M8,8 L92,8 M8,8 L8,92 M18,18 L80,18 M18,18 L18,80" stroke-width="2.5"/>
-                            <circle cx="28" cy="28" r="8" stroke-width="2"/>
-                            <path d="M28,12 L28,44 M12,28 L44,28" stroke-width="1.5"/>
-                            <path d="M40,8 C60,8 75,20 85,35 M8,40 C8,60 20,75 35,85" stroke-width="1" stroke-dasharray="3 2"/>
-                        </svg>
-                        <!-- Top-Right Corner -->
-                        <svg class="absolute top-2 right-2 text-slate-800 opacity-80 transform rotate-90" width="54" height="54" viewBox="0 0 100 100" fill="none" stroke="currentColor">
-                            <path d="M5,5 L95,5 L95,15 L15,15 L15,95 L5,95 Z" fill="currentColor" opacity="0.15"/>
-                            <path d="M8,8 L92,8 M8,8 L8,92 M18,18 L80,18 M18,18 L18,80" stroke-width="2.5"/>
-                            <circle cx="28" cy="28" r="8" stroke-width="2"/>
-                            <path d="M28,12 L28,44 M12,28 L44,28" stroke-width="1.5"/>
-                            <path d="M40,8 C60,8 75,20 85,35 M8,40 C8,60 20,75 35,85" stroke-width="1" stroke-dasharray="3 2"/>
-                        </svg>
-                        <!-- Bottom-Left Corner -->
-                        <svg class="absolute bottom-2 left-2 text-slate-800 opacity-80 transform -rotate-90" width="54" height="54" viewBox="0 0 100 100" fill="none" stroke="currentColor">
-                            <path d="M5,5 L95,5 L95,15 L15,15 L15,95 L5,95 Z" fill="currentColor" opacity="0.15"/>
-                            <path d="M8,8 L92,8 M8,8 L8,92 M18,18 L80,18 M18,18 L18,80" stroke-width="2.5"/>
-                            <circle cx="28" cy="28" r="8" stroke-width="2"/>
-                            <path d="M28,12 L28,44 M12,28 L44,28" stroke-width="1.5"/>
-                            <path d="M40,8 C60,8 75,20 85,35 M8,40 C8,60 20,75 35,85" stroke-width="1" stroke-dasharray="3 2"/>
-                        </svg>
-                        <!-- Bottom-Right Corner -->
-                        <svg class="absolute bottom-2 right-2 text-slate-800 opacity-80 transform rotate-180" width="54" height="54" viewBox="0 0 100 100" fill="none" stroke="currentColor">
-                            <path d="M5,5 L95,5 L95,15 L15,15 L15,95 L5,95 Z" fill="currentColor" opacity="0.15"/>
-                            <path d="M8,8 L92,8 M8,8 L8,92 M18,18 L80,18 M18,18 L18,80" stroke-width="2.5"/>
-                            <circle cx="28" cy="28" r="8" stroke-width="2"/>
-                            <path d="M28,12 L28,44 M12,28 L44,28" stroke-width="1.5"/>
-                            <path d="M40,8 C60,8 75,20 85,35 M8,40 C8,60 20,75 35,85" stroke-width="1" stroke-dasharray="3 2"/>
-                        </svg>
-                    </div>
-
-                    <!-- 2. HIGH-DETAIL WATERMARK BACKGROUND (Padma & Emblem Mandala SVG) -->
-                    <div class="doc-watermark">
-                        <svg width="520" height="520" viewBox="0 0 400 400" fill="none" stroke="currentColor" class="text-slate-900">
-                            <!-- Outer Rosette/Mandala -->
-                            <circle cx="200" cy="200" r="190" stroke-width="1.5" stroke-dasharray="4 3"/>
-                            <circle cx="200" cy="200" r="180" stroke-width="2"/>
-                            <circle cx="200" cy="200" r="165" stroke-width="1"/>
+                    <!-- Ornate Outer Frame -->
+                    <div class="doc-border-frame">
+                        <div class="doc-border-inner">
                             
-                            <!-- Balinese Padma Lotus Petals Pattern -->
-                            <g stroke-width="1.2">
-                                <path d="M200,20 C230,100 230,100 200,180 C170,100 170,100 200,20 Z" />
-                                <path d="M200,380 C230,300 230,300 200,220 C170,300 170,300 200,380 Z" />
-                                <path d="M20,200 C100,230 100,230 180,200 C100,170 100,170 20,200 Z" />
-                                <path d="M380,200 C300,230 300,230 220,200 C300,170 300,170 380,200 Z" />
-                                <path d="M72,72 C130,130 130,130 185,185 C130,130 130,130 72,72 Z" />
-                                <path d="M328,328 C270,270 270,270 215,215 C270,270 270,270 328,328 Z" />
-                                <path d="M328,72 C270,130 270,130 215,185 C270,130 270,130 328,72 Z" />
-                                <path d="M72,328 C130,270 130,270 185,215 C130,270 130,270 72,328 Z" />
-                            </g>
+                            <!-- Subtle Background Watermark Logo -->
+                            <img src="https://i.imgur.com/zuR9i4p.png" alt="Watermark SMKN 1 Bebandem" class="doc-watermark" crossorigin="anonymous" onerror="this.style.display='none';" />
 
-                            <!-- Center Shield Emblem -->
-                            <circle cx="200" cy="200" r="110" stroke-width="2"/>
-                            <polygon points="200,100 270,140 270,220 200,280 130,220 130,140" stroke-width="2" fill="none"/>
-                            <!-- Star & Wings Symbol -->
-                            <polygon points="200,120 212,150 245,150 220,170 230,200 200,180 170,200 180,170 155,150 188,150" stroke-width="1.5" fill="none"/>
-                            <!-- Text Ring -->
-                            <circle cx="200" cy="200" r="85" stroke-width="1" stroke-dasharray="2 2"/>
-                        </svg>
-                    </div>
+                            <!-- Decorative SVG Corner Flourishes -->
+                            <svg class="absolute top-2 left-2 w-6 h-6 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M3 9V3h6M3 3l7 7M3 15v6h6M3 21l7-7M21 9V3h-6M21 3l-7 7M21 15v6h-6M21 21l-7-7" />
+                            </svg>
+                            <svg class="absolute top-2 right-2 w-6 h-6 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M21 9V3h-6M21 3l-7 7M3 9V3h6M3 3l7 7M21 15v6h-6M21 21l-7-7M3 15v6h6M3 21l7-7" />
+                            </svg>
 
-                    <div class="relative z-10">
-                        <!-- KOP SURAT ELEGAN DAN CLEAN (DILENGKAPI AKSARA BALI & DIVIDER MEWAH) -->
-                        <div class="text-center pb-2 relative">
-                            <!-- Aksara Bali 1 -->
-                            <p class="font-balinese text-[11px] font-medium text-slate-800 leading-snug tracking-wider mb-0.5">
-                                ᬧᭂᬫᭂᬭᬶᬦ᭄ᬢᬄ ᬧ᭄ᬭ᭝ᬯᬶᬲ᭄ᬲᬶ ᬩᬮᬶ
-                            </p>
-                            <h2 class="text-base font-bold uppercase tracking-[0.2em] font-cinzel text-slate-900 leading-snug">
-                                PEMERINTAH PROVINSI BALI
-                            </h2>
-                            <h3 class="text-xs font-semibold uppercase tracking-wider font-sans text-slate-700 leading-snug">
-                                DINAS PENDIDIKAN KEPEMUDAAN DAN OLAHRAGA
-                            </h3>
-                            
-                            <!-- Aksara Bali 2 -->
-                            <p class="font-balinese text-[11px] font-medium text-slate-800 leading-snug tracking-wider my-0.5">
-                                ᬲ᭄ᬫ᭄ᬓ᭄ ᬦᭂᬕᭂᬭᬶ ᭑ ᬩᭂᬩᬦ᭄ᬤᭂᬫ᭄
-                            </p>
-                            <h1 class="text-xl font-bold uppercase tracking-widest font-serif text-slate-950 leading-tight">
-                                SMK NEGERI 1 BEBANDEM
-                            </h1>
-
-                            <!-- Aksara Bali 3 -->
-                            <p class="font-balinese text-[9.5px] font-medium text-slate-700 leading-tight my-0.5">
-                                ᬚᬮᬦ᭄ ᬭᬬ ᬲᬶᬩᭂᬢᬦ᭄ - ᬩᭂᬩᬦ᭄ᬤᭂᬫ᭄, ᬓᬭᬗᬲᭂᬫ᭄, ᭘ᭀ᭘᭞᭑
-                            </p>
-                            <p class="text-[11px] font-serif font-normal text-slate-700 tracking-wide">
-                                Jalan Raya Sibetan - Bebandem, Karangasem, Bali 80861
-                            </p>
-
-                            <!-- Ornamental Double Line Kop Surat with Center Emblem SVG -->
-                            <div class="mt-3 relative flex items-center justify-center">
-                                <div class="w-full border-b-2 border-slate-900"></div>
-                            </div>
-                            <div class="mt-0.5 flex items-center justify-between gap-2">
-                                <div class="flex-1 border-b border-slate-900"></div>
-                                <div class="flex items-center gap-1.5 px-3">
-                                    <svg class="text-slate-800" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                        <polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/>
-                                    </svg>
-                                    <span class="text-[10px] font-cinzel text-slate-900 uppercase tracking-widest font-bold">SMKN 1 BEBANDEM</span>
-                                    <svg class="text-slate-800" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                        <polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/>
-                                    </svg>
+                            <!-- KOP SURAT RESMI PEMPROV BALI & SMKN 1 BEBANDEM -->
+                            <div class="flex items-center justify-between pb-3 relative z-10">
+                                <!-- Logo Pemprov Bali (Left) -->
+                                <div class="w-20 h-20 flex-shrink-0 flex items-center justify-center">
+                                    <img src="https://i.imgur.com/FPCA2Ql.png" alt="Logo Pemprov Bali" class="object-contain" style="height: 78px; width: 78px;" crossorigin="anonymous" onerror="this.onerror=null; this.src='https://placehold.co/80x80/1d4ed8/ffffff?text=BALI';" />
                                 </div>
-                                <div class="flex-1 border-b border-slate-900"></div>
-                            </div>
-                        </div>
 
-                        <!-- Judul & Nomor Berita Acara -->
-                        <div class="text-center my-6 relative">
-                            <div class="inline-block relative">
-                                <h3 class="text-base font-bold uppercase tracking-wider font-serif text-slate-950 px-6 py-0.5 border-b-2 border-slate-900">
-                                    BERITA ACARA <span id="preview-program-title">PKL / BELAJAR DI DUDI</span>
-                                </h3>
-                            </div>
-                            <p id="doc-nomor" class="text-xs font-serif italic text-slate-800 mt-1.5 font-semibold tracking-wide">
-                                Nomor: PKL-BelajarDUDI/01/IX/2026
-                            </p>
-                        </div>
+                                <!-- Middle Header Text & Balinese Script -->
+                                <div class="text-center flex-1 px-2">
+                                    <p class="font-balinese text-xs font-semibold leading-tight mb-0.5" style="letter-spacing: 0.5px;">
+                                        ᬧᭂᬫᭂᬭᬶᬦ᭄ᬢᬄ ᬧ᭄ᬭ᭝ᬯᬶᬦ᭄ᬲᬶ ᬩᬮᬶ
+                                    </p>
+                                    <h2 class="text-base font-bold uppercase tracking-wider font-serif leading-tight text-slate-900">
+                                        PEMERINTAH PROVINSI BALI
+                                    </h2>
+                                    <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-700 font-sans">
+                                        DINAS PENDIDIKAN KEPEMUDAAN DAN OLAHRAGA
+                                    </h3>
+                                    
+                                    <p class="font-balinese text-xs font-semibold leading-tight my-0.5" style="letter-spacing: 0.5px;">
+                                        ᬲ᭄ᬫ᭄ᬓ᭄ ᬦᭂᬕᭂᬭᬶ ᭑ ᬩᭂᬩᬦ᭄ᬤᭂᬫ᭄
+                                    </p>
+                                    <h1 class="text-lg font-extrabold uppercase tracking-wide font-serif leading-tight text-slate-950">
+                                        SMK NEGERI 1 BEBANDEM
+                                    </h1>
 
-                        <!-- Body Content -->
-                        <div class="text-justify text-sm leading-relaxed font-serif space-y-4">
-                            <p class="indent-8 text-slate-900">
-                                Pada hari ini <span id="preview-hari" class="font-bold">Senin</span>, tanggal <span id="preview-tanggal-lengkap" class="font-bold">21 September 2026</span>, telah dilaksanakan kegiatan <strong id="preview-tujuan-kegiatan" class="underline decoration-slate-400 underline-offset-2">Monitoring siswa PKL</strong> bersama pihak Dunia Usaha / Dunia Industri (DUDI) yang bertempat di:
-                            </p>
-
-                            <!-- Structured Data Table Box with Decorative Corner Accents -->
-                            <div class="bg-slate-50/80 border border-slate-300 rounded-lg p-4 my-3 font-serif text-slate-900 shadow-sm relative overflow-hidden">
-                                <div class="absolute left-0 top-0 bottom-0 w-1 bg-slate-800"></div>
-                                <table class="w-full text-xs sm:text-sm border-collapse">
-                                    <tbody>
-                                        <tr class="align-top border-b border-slate-200/80">
-                                            <td class="py-2 font-bold text-slate-800 w-1/3 flex items-center gap-1.5">
-                                                <i class="fa-solid fa-industry text-[11px] text-slate-600"></i>
-                                                <span>Nama DUDI</span>
-                                            </td>
-                                            <td class="py-2 text-center font-bold w-6">:</td>
-                                            <td id="preview-namaDudi" class="py-2 font-bold text-slate-950 uppercase tracking-wide">Atyana</td>
-                                        </tr>
-                                        <tr class="align-top border-b border-slate-200/80">
-                                            <td class="py-2 font-bold text-slate-800">
-                                                <div class="flex items-center gap-1.5">
-                                                    <i class="fa-solid fa-map-location-dot text-[11px] text-slate-600"></i>
-                                                    <span>Alamat DUDI</span>
-                                                </div>
-                                            </td>
-                                            <td class="py-2 text-center font-bold">:</td>
-                                            <td id="preview-alamatDudi" class="py-2 font-normal text-slate-900">Jalan Karangasem-Denpasar, Candi Dasa, Manggis</td>
-                                        </tr>
-                                        <tr class="align-top">
-                                            <td class="py-2 font-bold text-slate-800">
-                                                <div class="flex items-center gap-1.5">
-                                                    <i class="fa-solid fa-layer-group text-[11px] text-slate-600"></i>
-                                                    <span>Program Kegiatan</span>
-                                                </div>
-                                            </td>
-                                            <td class="py-2 text-center font-bold">:</td>
-                                            <td id="preview-program-detail" class="py-2 font-semibold text-slate-900">PKL (Praktik Kerja Lapangan)</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <!-- Catatan Section Card -->
-                            <div class="pt-1">
-                                <p class="text-xs font-bold uppercase tracking-wider text-slate-900 mb-1.5 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-pen-nib text-[10px] text-slate-700"></i>
-                                    <span>Catatan & Hasil Monitoring:</span>
-                                </p>
-                                <div class="border-l-2 border-slate-900 bg-slate-50/90 p-3.5 rounded-r-lg border-y border-r border-slate-200 relative">
-                                    <p id="preview-catatan" class="text-xs sm:text-sm italic leading-relaxed text-slate-900 whitespace-pre-line text-justify">
-                                        Monitoring dilakukan dengan baik, tanpa ada permasalahan siswa. Siswa disiplin dan mengikuti standar operasional DUDI.
+                                    <p class="font-balinese text-[10px] font-semibold leading-tight my-0.5">
+                                        ᬚᬮᬦ᭄ ᬭᬬ ᬲᬶᬩᭂᬢᬦ᭄ - ᬩᭂᬩᬦ᭄ᬤᭂᬫ᭄, ᬓᬭᬗᬲᭂᬫ᭄, ᭘ᭀ᭘᭞᭑
+                                    </p>
+                                    <p class="text-[11px] font-serif font-normal text-slate-700">
+                                        Jalan Raya Sibetan - Bebandem, Karangasem, Bali 80861 | Telp/Website: smkn1bebandem.sch.id
                                     </p>
                                 </div>
+
+                                <!-- Logo SMKN 1 Bebandem (Right) -->
+                                <div class="w-20 h-20 flex-shrink-0 flex items-center justify-center">
+                                    <img src="https://i.imgur.com/zuR9i4p.png" alt="Logo SMKN 1 Bebandem" class="object-contain" style="height: 78px; width: 78px;" crossorigin="anonymous" onerror="this.onerror=null; this.src='https://placehold.co/80x80/0284c7/ffffff?text=SMKN1';" />
+                                </div>
                             </div>
 
-                            <p class="indent-8 pt-1 text-slate-900">
-                                Demikian Berita Acara ini dibuat dengan sebenarnya untuk dapat dipergunakan sebagaimana mestinya.
-                            </p>
-                        </div>
+                            <!-- Decorative Kop Separator Rule -->
+                            <div class="relative flex items-center justify-center my-1.5 z-10">
+                                <div class="w-full border-t-2 border-slate-900"></div>
+                                <div class="absolute bg-white px-2 text-slate-800 text-xs">
+                                    ❖
+                                </div>
+                            </div>
+                            <div class="w-full border-t border-slate-400 mb-4 z-10"></div>
 
-                        <!-- Signatures & Verification Area -->
-                        <div class="mt-10 font-serif relative">
-                            <div class="grid grid-cols-2 gap-8 text-sm">
-                                
-                                <!-- Instruktur PKL (Kiri) -->
-                                <div class="text-center flex flex-col justify-between h-44">
-                                    <div>
-                                        <p class="invisible mb-1 text-xs">Tanggal Placeholder</p>
-                                        <p class="font-bold text-slate-900 uppercase tracking-wider text-xs">Instruktur PKL / DUDI</p>
+                            <!-- Document Status & Title Header -->
+                            <div class="text-center my-5 relative z-10">
+                                <div class="inline-block px-3 py-0.5 bg-slate-100 border border-slate-300 rounded text-[10px] font-sans font-bold tracking-widest uppercase text-slate-700 mb-1">
+                                    DOKUMEN RESMI TERTANDA ELEKTRONIK
+                                </div>
+                                <h3 class="text-lg font-bold underline uppercase tracking-wider font-serif text-slate-900">
+                                    BERITA ACARA <span id="preview-program-title">PKL / BELAJAR DI DUDI</span>
+                                </h3>
+                                <p id="doc-nomor" class="text-sm font-serif italic mt-1 font-semibold text-slate-800">
+                                    No. PKL-BelajarDUDI/01/IX/2026
+                                </p>
+                            </div>
+
+                            <!-- Paragraf Pembuka -->
+                            <div class="text-justify text-base leading-relaxed mb-4 font-serif relative z-10 text-slate-900">
+                                Pada hari ini, <span id="preview-hari-tanggal" class="font-semibold">Senin, 21 September 2026</span> telah dilaksanakan kegiatan <strong id="preview-tujuan-kegiatan" class="underline">Monitoring siswa PKL siswa</strong> dalam rangka program pembelajaran dan kerjasama Lapangan Industri / DUDI, bertempat di:
+                            </div>
+
+                            <!-- Detail DUDI Card Table -->
+                            <div class="mb-5 border border-slate-300 rounded-lg overflow-hidden relative z-10 bg-slate-50/50">
+                                <div class="bg-slate-200/70 px-3 py-1.5 border-b border-slate-300 text-xs font-sans font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-building text-slate-600"></i>
+                                    <span>Identitas Dunia Usaha / Dunia Industri (DUDI)</span>
+                                </div>
+                                <div class="p-3 font-serif space-y-2 text-base text-slate-900">
+                                    <div class="flex flex-col sm:flex-row sm:items-baseline">
+                                        <span class="w-44 font-bold text-slate-700 text-sm">Nama DUDI / Perusahaan</span>
+                                        <span class="hidden sm:inline mr-2">:</span>
+                                        <span id="preview-namaDudi" class="font-semibold text-slate-950 flex-1">Atyana</span>
                                     </div>
-                                    
-                                    <div class="h-20 w-44 mx-auto flex items-center justify-center my-1 relative">
-                                        <img id="preview-img-instruktur" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="max-h-20 max-w-full hidden object-contain" alt="TTD Instruktur" />
-                                        <span id="preview-empty-instruktur" class="text-[11px] text-slate-400 italic">[Tanda Tangan Belum Ada]</span>
+                                    <div class="flex flex-col sm:flex-row sm:items-baseline">
+                                        <span class="w-44 font-bold text-slate-700 text-sm">Alamat Lengkap DUDI</span>
+                                        <span class="hidden sm:inline mr-2">:</span>
+                                        <span id="preview-alamatDudi" class="font-normal text-slate-900 flex-1">Jalan Karangasem-Denpasar, Candi Dasa, Manggis</span>
                                     </div>
-                                    
-                                    <div>
-                                        <p id="preview-namaInstruktur" class="font-bold underline text-slate-950 uppercase text-sm">
-                                            I Nyoman Tombos
-                                        </p>
-                                        <p class="text-xs text-slate-600 font-sans">Pembimbing Industri</p>
+                                    <div class="flex flex-col sm:flex-row sm:items-baseline">
+                                        <span class="w-44 font-bold text-slate-700 text-sm">Program Kegiatan</span>
+                                        <span class="hidden sm:inline mr-2">:</span>
+                                        <span id="preview-program-badge" class="font-semibold text-emerald-800 flex-1">PKL (Praktik Kerja Lapangan)</span>
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Guru Pembimbing (Kanan) -->
-                                <div class="text-center flex flex-col justify-between h-44">
-                                    <div>
-                                        <p id="preview-lokasi-tanggal" class="font-medium text-slate-900 text-xs mb-1">
+                            <!-- Catatan Section -->
+                            <div class="mb-6 font-serif relative z-10">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-sm font-bold underline uppercase text-slate-900">Catatan & Hasil Monitoring :</span>
+                                </div>
+                                <div class="p-3.5 border-l-4 border-emerald-600 bg-slate-50 rounded-r-lg border-y border-r border-slate-200 text-base leading-relaxed whitespace-pre-line text-justify text-slate-900 min-h-[60px]" id="preview-catatan">
+                                    Monitoring dilakukan dengan baik, tanpa ada permasalahan siswa.
+                                </div>
+                            </div>
+
+                            <!-- Paragraf Penutup -->
+                            <p class="text-base text-justify leading-relaxed mb-6 font-serif relative z-10 text-slate-900">
+                                Demikian Berita Acara ini dibuat dengan sebenarnya sesuai dengan kondisi pelaksanaan di lapangan untuk dapat dipergunakan sebagaimana mestinya.
+                            </p>
+
+                            <!-- Signatures Section -->
+                            <div class="font-serif relative z-10 mb-6">
+                                <div class="flex justify-between items-start text-base">
+                                    
+                                    <!-- Instruktur PKL / DUDI (Kiri) -->
+                                    <div class="w-1/2 flex flex-col items-center text-center px-2">
+                                        <p class="invisible text-xs mb-1">Lokasi Tanggal Placeholder</p>
+                                        <p class="font-bold text-slate-900 text-sm mb-1">Pihak DUDI / Instruktur PKL</p>
+                                        
+                                        <div class="h-24 w-52 border border-dashed border-slate-300 rounded flex items-center justify-center my-1.5 bg-white/80 relative">
+                                            <img id="preview-img-instruktur" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="max-h-20 max-w-full hidden object-contain z-10" alt="TTD Instruktur" />
+                                            <span id="preview-empty-instruktur" class="text-xs text-slate-400 italic font-sans">[ Tanda Tangan Instruktur ]</span>
+                                        </div>
+                                        
+                                        <p id="preview-namaInstruktur" class="font-bold underline text-base text-slate-950 mt-1">
+                                            I Nyoman Tombos
+                                        </p>
+                                        <p class="text-xs text-slate-600 font-sans mt-0.5">Instruktur Lapangan DUDI</p>
+                                    </div>
+
+                                    <!-- Guru Pembimbing (Kanan) -->
+                                    <div class="w-1/2 flex flex-col items-center text-center px-2">
+                                        <p id="preview-lokasi-tanggal" class="font-semibold text-slate-900 text-sm mb-1">
                                             Karangasem, 21 September 2026
                                         </p>
-                                        <p class="font-bold text-slate-900 uppercase tracking-wider text-xs">Guru Pembimbing Sekolah</p>
-                                    </div>
-                                    
-                                    <div class="h-20 w-44 mx-auto flex items-center justify-center my-1 relative">
-                                        <img id="preview-img-pembimbing" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="max-h-20 max-w-full hidden object-contain" alt="TTD Pembimbing" />
-                                        <span id="preview-empty-pembimbing" class="text-[11px] text-slate-400 italic">[Tanda Tangan Belum Ada]</span>
-                                    </div>
-                                    
-                                    <div>
-                                        <p id="preview-namaPembimbing" class="font-bold underline text-slate-950 uppercase text-sm">
-                                            I Nyoman Dwitika Adi Ana
+                                        <p class="font-bold text-slate-900 text-sm mb-1">Guru Pembimbing Sekolah</p>
+                                        
+                                        <div class="h-24 w-52 border border-dashed border-slate-300 rounded flex items-center justify-center my-1.5 bg-white/80 relative">
+                                            <img id="preview-img-pembimbing" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="max-h-20 max-w-full hidden object-contain z-10" alt="TTD Pembimbing" />
+                                            <span id="preview-empty-pembimbing" class="text-xs text-slate-400 italic font-sans">[ Tanda Tangan Pembimbing ]</span>
+                                        </div>
+                                        
+                                        <p id="preview-namaPembimbing" class="font-bold underline text-base text-slate-950 mt-1">
+                                            I Nyoman Dwitika Adi Ana, S.Pd.
                                         </p>
-                                        <p id="preview-nipGuru" class="text-xs text-slate-800 font-semibold font-mono">
+                                        <p id="preview-nipGuru" class="text-xs text-slate-800 font-sans mt-0.5 font-mono">
                                             NIP. 198410182009021003
                                         </p>
                                     </div>
-                                </div>
 
+                                </div>
                             </div>
 
-                            <!-- 3. OFFICIAL STAMP BADGE & QR VERIFICATION FOOTER -->
-                            <div id="doc-qr-seal-container" class="mt-6 pt-3 border-t border-dashed border-slate-300 flex items-center justify-between text-[10px] text-slate-600 font-sans">
-                                <!-- QR Seal & Code -->
+                            <!-- Verification Badge / Validasi Digital (Dipindahkan Ke Bawah) -->
+                            <div class="border-t border-slate-200 pt-3 mt-4 relative z-10 flex items-center justify-between bg-slate-50/40 px-3 py-2 rounded-lg">
                                 <div class="flex items-center gap-3">
-                                    <div id="qrcode-preview" class="w-12 h-12 bg-white p-0.5 border border-slate-300 rounded shadow-sm flex items-center justify-center"></div>
-                                    <div>
-                                        <p class="font-bold text-slate-900 uppercase tracking-wider text-[9px]">E-BERITA ACARA VERIFIED</p>
-                                        <p class="text-[9.5px] text-slate-700">SMK Negeri 1 Bebandem &bull; Karangasem Bali</p>
-                                        <p id="qr-doc-hash" class="font-mono text-[8.5px] text-slate-500">REF: BA-2026-0921-OK</p>
-                                    </div>
-                                </div>
-
-                                <!-- Official Seal Vector Stamp Illustration -->
-                                <div class="flex items-center gap-2">
-                                    <div class="text-right italic text-[9.5px] text-slate-500 hidden sm:block">
-                                        <p class="font-semibold text-slate-800">Dokumen Digital Sah</p>
-                                        <p>Telah terverifikasi via QR Code.</p>
-                                    </div>
-                                    
-                                    <!-- Circular Gold/Bronze Guarantee Seal SVG -->
-                                    <div class="w-12 h-12 relative flex items-center justify-center text-slate-800">
-                                        <svg width="48" height="48" viewBox="0 0 100 100" fill="none">
-                                            <circle cx="50" cy="50" r="46" fill="#0f172a" opacity="0.05"/>
-                                            <circle cx="50" cy="50" r="44" stroke="#0f172a" stroke-width="2" stroke-dasharray="3 2"/>
-                                            <circle cx="50" cy="50" r="38" stroke="#0f172a" stroke-width="1.5"/>
-                                            <path id="sealTextPath" d="M 20,50 A 30,30 0 1,1 80,50" fill="none"/>
-                                            <text font-size="7.5" font-family="Times New Roman" font-weight="bold" fill="#0f172a" letter-spacing="1">
-                                                <textPath href="#sealTextPath" startOffset="50%" text-anchor="middle">
-                                                    TERVERIFIKASI
-                                                </textPath>
-                                            </text>
-                                            <polygon points="50,26 54,36 65,36 56,42 59,52 50,46 41,52 44,42 35,36 46,36" fill="#0f172a"/>
-                                        </svg>
+                                    <img id="preview-qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=SMKN1BEBANDEM-BERITA-ACARA" alt="QR Verifikasi" class="w-14 h-14 border border-slate-300 p-1 bg-white rounded" />
+                                    <div class="text-[10px] font-sans text-slate-600 space-y-0.5">
+                                        <p class="font-bold text-slate-800">VALIDASI DIGITAL DOKUMEN</p>
+                                        <p>Kode Dokumen: <span id="preview-doc-hash" class="font-mono text-slate-900">BA-2026-9218</span></p>
+                                        <p>E-Berita Acara SMKN 1 Bebandem</p>
+                                        <p class="text-emerald-700 font-semibold"><i class="fa-solid fa-shield-halved"></i> Terverifikasi Sistem Informasi Sekolah</p>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
+                        </div>
                     </div>
+
                 </div>
             </div>
         </section>
 
-        <!-- HISTORY TAB -->
         <section id="tab-history" class="hidden space-y-4">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
                     <div>
                         <h2 class="text-lg font-bold text-white">Daftar Berita Acara Tersimpan</h2>
-                        <p class="text-xs text-slate-400">Data tersimpan aman di penyimpanan lokal browser Anda.</p>
+                        <p class="text-xs text-slate-400">Data tersimpan di penyimpanan lokal browser Anda.</p>
                     </div>
                     <a href="https://drive.google.com/drive/folders/19DpURTEciTt0gz6H76ehDFQjICkCxMS7?usp=sharing" target="_blank" rel="noopener noreferrer"
                        class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 text-xs font-semibold rounded-xl flex items-center gap-2">
@@ -894,166 +732,282 @@
 
     </main>
 
-    <!-- SUCCESS MODAL WITH ELEGANT GRAPHICS -->
     <div id="modalSuccess" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl text-center space-y-4 relative overflow-hidden">
-            <!-- Background Glow Illustration -->
-            <div class="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none"></div>
-
-            <div class="w-16 h-16 bg-emerald-500/20 border border-emerald-500/40 rounded-full flex items-center justify-center mx-auto text-emerald-400 text-3xl shadow-lg shadow-emerald-950/50">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl text-center space-y-4">
+            <div class="w-16 h-16 bg-emerald-500/20 border border-emerald-500/40 rounded-full flex items-center justify-center mx-auto text-emerald-400 text-3xl">
                 <i class="fa-solid fa-circle-check"></i>
             </div>
             
             <h3 class="text-xl font-bold text-white">Berita Acara Berhasil Disimpan!</h3>
             <p class="text-xs text-slate-300 leading-relaxed">
-                Dokumen Berita Acara PKL/DUDI telah berhasil disimpan dan siap diunduh dalam format PDF atau Gambar.
+                Dokumen Berita Acara PKL/DUDI telah berhasil disimpan ke sistem local storage dan siap diunduh dalam format gambar PNG resmi.
             </p>
 
-            <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 text-left space-y-1.5 text-xs text-slate-400">
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-left space-y-1 text-xs text-slate-400">
                 <div class="flex justify-between">
-                    <span>Nama DUDI:</span>
+                    <span>DUDI:</span>
                     <strong id="modal-dudi" class="text-slate-200">Atyana</strong>
                 </div>
                 <div class="flex justify-between">
                     <span>No. Surat:</span>
-                    <strong id="modal-nosurat" class="text-slate-200">PKL-BelajarDUDI/01/IX/2026</strong>
+                    <strong id="modal-nosurat" class="text-slate-200">No. PKL-BelajarDUDI/01/IX/2026</strong>
                 </div>
             </div>
 
             <div class="flex flex-col gap-2 pt-2">
-                <button onclick="downloadAsImage()" class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-purple-900/30">
+                <button onclick="downloadAsImage()" class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2">
                     <i class="fa-solid fa-file-image"></i> Unduh Format Gambar (PNG)
-                </button>
-                <button onclick="generateAndPrintPDF()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-emerald-900/30">
-                    <i class="fa-solid fa-file-pdf"></i> Unduh Berkas PDF Sekarang
                 </button>
                 <a href="https://drive.google.com/drive/folders/19DpURTEciTt0gz6H76ehDFQjICkCxMS7?usp=sharing" target="_blank" rel="noopener noreferrer"
                    class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-xs rounded-xl transition-all flex items-center justify-center gap-2">
                     <i class="fa-brands fa-google-drive text-emerald-400"></i> Unggah Ke Google Drive
                 </a>
-                <button onclick="closeModal()" class="w-full py-2 text-slate-400 hover:text-white text-xs transition-colors">
+                <button onclick="closeModal()" class="w-full py-2 text-slate-400 hover:text-white text-xs font-semibold">
                     Tutup
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- Custom Toast Container -->
+    <div id="custom-toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-slate-900 border border-slate-700 text-slate-100 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+            <div id="toast-icon" class="text-emerald-400 text-xl">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <h4 id="toast-title" class="text-xs font-bold text-white">Notifikasi</h4>
+                <p id="toast-message" class="text-xs text-slate-300">Pesan konfirmasi sistem.</p>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // State variables
+        let historyRecords = [];
         let signatureData = {
             instruktur: null,
             pembimbing: null
         };
-        let historyRecords = [];
-        let showQRSeal = true;
-        let qrCodeObj = null;
 
-        window.onload = function () {
-            initSignatureCanvas('instruktur');
-            initSignatureCanvas('pembimbing');
-            
-            // Set today's date default
-            const today = new Date();
-            const dateStr = today.toISOString().split('T')[0];
-            document.getElementById('tanggalKegiatan').value = dateStr;
+        function showToast(message, title = 'Informasi', type = 'success') {
+            const toast = document.getElementById('custom-toast');
+            const toastTitle = document.getElementById('toast-title');
+            const toastMsg = document.getElementById('toast-message');
+            const toastIcon = document.getElementById('toast-icon');
 
-            loadHistoryFromStorage();
-            updateLivePreview();
-        };
+            if (!toast) return;
 
-        // Tab Switcher Logic
+            toastTitle.innerText = title;
+            toastMsg.innerText = message;
+
+            if (type === 'success') {
+                toastIcon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
+            } else if (type === 'warning') {
+                toastIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-400"></i>';
+            } else {
+                toastIcon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-400"></i>';
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+
+        function formatIndonesianDate(dateString) {
+            if (!dateString) return '21 September 2026';
+            const months = [
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            ];
+            const parts = dateString.split('-');
+            if (parts.length === 3) {
+                const year = parts[0];
+                const monthIndex = parseInt(parts[1], 10) - 1;
+                const day = parseInt(parts[2], 10);
+                if (monthIndex >= 0 && monthIndex < 12 && !isNaN(day)) {
+                    return `${day} ${months[monthIndex]} ${year}`;
+                }
+            }
+            return dateString;
+        }
+
         function switchTab(tabName) {
             const tabs = ['form', 'preview', 'history'];
             tabs.forEach(tab => {
-                const sec = document.getElementById(`tab-${tab}`);
+                const section = document.getElementById(`tab-${tab}`);
                 const btn = document.getElementById(`tab-${tab}-btn`);
-                if (tab === tabName) {
-                    sec.classList.remove('hidden');
-                    btn.className = "px-5 py-3 font-semibold text-sm border-b-2 border-emerald-500 text-emerald-400 flex items-center gap-2 transition-all whitespace-nowrap";
-                } else {
-                    sec.classList.add('hidden');
-                    btn.className = "px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition-all whitespace-nowrap";
+                if (section) {
+                    if (tab === tabName) {
+                        section.classList.remove('hidden');
+                    } else {
+                        section.classList.add('hidden');
+                    }
+                }
+                if (btn) {
+                    if (tab === tabName) {
+                        btn.className = 'px-5 py-3 font-semibold text-sm border-b-2 border-emerald-500 text-emerald-400 flex items-center gap-2 transition-all whitespace-nowrap';
+                    } else {
+                        btn.className = 'px-5 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition-all whitespace-nowrap';
+                    }
                 }
             });
-
             if (tabName === 'preview') {
                 updateLivePreview();
             }
         }
 
-        // Signature Canvas Logic
-        function initSignatureCanvas(type) {
-            const canvas = document.getElementById(`canvas-${type}`);
+        function handleKirim() {
+            const namaGuru = document.getElementById('namaGuru')?.value || '';
+            const nipGuru = document.getElementById('nipGuru')?.value || '';
+            const program = document.getElementById('program')?.value || 'PKL';
+            const nomorSurat = document.getElementById('nomorSurat')?.value || '';
+            const tanggal = document.getElementById('tanggalKegiatan')?.value || '';
+            const kotaTerbit = document.getElementById('kotaTerbit')?.value || 'Karangasem';
+            const tujuan = document.getElementById('tujuan')?.value || '';
+            const namaDudi = document.getElementById('namaDudi')?.value || '';
+            const alamatDudi = document.getElementById('alamatDudi')?.value || '';
+            const catatan = document.getElementById('catatan')?.value || '';
+            const namaInstruktur = document.getElementById('namaInstruktur')?.value || '';
+            const namaPembimbing = document.getElementById('namaPembimbing')?.value || '';
+
+            const newRecord = {
+                id: Date.now(),
+                namaGuru,
+                nipGuru,
+                program,
+                nomorSurat,
+                tanggal,
+                kotaTerbit,
+                tujuan,
+                namaDudi,
+                alamatDudi,
+                catatan,
+                namaInstruktur,
+                namaPembimbing,
+                sigInstruktur: signatureData.instruktur,
+                sigPembimbing: signatureData.pembimbing
+            };
+
+            historyRecords.unshift(newRecord);
+            saveHistoryToStorage();
+            renderHistoryTable();
+
+            const modalDudi = document.getElementById('modal-dudi');
+            const modalNoSurat = document.getElementById('modal-nosurat');
+            if (modalDudi) modalDudi.innerText = namaDudi;
+            if (modalNoSurat) modalNoSurat.innerText = nomorSurat;
+
+            const modal = document.getElementById('modalSuccess');
+            if (modal) modal.classList.remove('hidden');
+
+            showToast('Berita Acara berhasil disimpan!', 'Sukses', 'success');
+        }
+
+        // Initialize Canvas Drawing Logic
+        function initCanvas(canvasId, type) {
+            const canvas = document.getElementById(canvasId);
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
+
+            function resizeCanvas() {
+                const rect = canvas.getBoundingClientRect();
+                const dpr = window.devicePixelRatio || 1;
+                const w = rect.width > 0 ? rect.width : (canvas.offsetWidth || 400);
+                const h = rect.height > 0 ? rect.height : (canvas.offsetHeight || 150);
+                canvas.width = Math.max(1, Math.round(w * dpr));
+                canvas.height = Math.max(1, Math.round(h * dpr));
+                ctx.scale(dpr, dpr);
+                ctx.lineWidth = 2.5;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = '#0284c7';
+            }
+
+            resizeCanvas();
+
             let isDrawing = false;
-
-            // Canvas DPI adjust
-            const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-
-            ctx.lineWidth = 2.5;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.strokeStyle = '#38bdf8'; // Sky blue stroke for signature on canvas
+            let lastX = 0;
+            let lastY = 0;
 
             function getPos(e) {
-                const cRect = canvas.getBoundingClientRect();
+                const rect = canvas.getBoundingClientRect();
+                let clientX = e.clientX;
+                let clientY = e.clientY;
                 if (e.touches && e.touches[0]) {
-                    return {
-                        x: e.touches[0].clientX - cRect.left,
-                        y: e.touches[0].clientY - cRect.top
-                    };
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
                 }
                 return {
-                    x: e.clientX - cRect.left,
-                    y: e.clientY - cRect.top
+                    x: clientX - rect.left,
+                    y: clientY - rect.top
                 };
             }
 
-            function startDraw(e) {
-                e.preventDefault();
+            function startDrawing(e) {
                 isDrawing = true;
-                canvas.classList.add('active');
                 const pos = getPos(e);
-                ctx.beginPath();
-                ctx.moveTo(pos.x, pos.y);
-                document.getElementById(`placeholder-${type}`).style.display = 'none';
+                lastX = pos.x;
+                lastY = pos.y;
+                canvas.classList.add('active');
+                const placeholder = document.getElementById(`placeholder-${type}`);
+                if (placeholder) placeholder.style.display = 'none';
             }
 
             function draw(e) {
                 if (!isDrawing) return;
                 e.preventDefault();
                 const pos = getPos(e);
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
                 ctx.lineTo(pos.x, pos.y);
                 ctx.stroke();
+                lastX = pos.x;
+                lastY = pos.y;
             }
 
-            function stopDraw(e) {
+            function stopDrawing() {
                 if (!isDrawing) return;
                 isDrawing = false;
                 canvas.classList.remove('active');
-                saveSignature(type);
+                saveSignatureData(canvas, type);
             }
 
-            // Mouse events
-            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousedown', startDrawing);
             canvas.addEventListener('mousemove', draw);
-            canvas.addEventListener('mouseup', stopDraw);
-            canvas.addEventListener('mouseleave', stopDraw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseleave', stopDrawing);
 
-            // Touch events
-            canvas.addEventListener('touchstart', startDraw);
-            canvas.addEventListener('touchmove', draw);
-            canvas.addEventListener('touchend', stopDraw);
+            canvas.addEventListener('touchstart', startDrawing, { passive: false });
+            canvas.addEventListener('touchmove', draw, { passive: false });
+            canvas.addEventListener('touchend', stopDrawing);
         }
 
-        function saveSignature(type) {
-            const canvas = document.getElementById(`canvas-${type}`);
-            if (!canvas) return;
-            signatureData[type] = canvas.toDataURL('image/png');
-            updateSignaturePreview(type);
+        function saveSignatureData(canvas, type) {
+            if (!canvas || canvas.width === 0 || canvas.height === 0) return;
+            const offscreen = document.createElement('canvas');
+            offscreen.width = canvas.width;
+            offscreen.height = canvas.height;
+            const offCtx = offscreen.getContext('2d');
+            
+            offCtx.drawImage(canvas, 0, 0);
+            
+            const imgData = offCtx.getImageData(0, 0, offscreen.width, offscreen.height);
+            const data = imgData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                if (data[i + 3] > 0) {
+                    data[i] = 15;     // Red -> dark indigo
+                    data[i + 1] = 23;  // Green
+                    data[i + 2] = 42;  // Blue
+                }
+            }
+            offCtx.putImageData(imgData, 0, 0);
+
+            signatureData[type] = offscreen.toDataURL('image/png');
+            updateLivePreview();
         }
 
         function clearSignature(type) {
@@ -1062,227 +1016,180 @@
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             signatureData[type] = null;
-            document.getElementById(`placeholder-${type}`).style.display = 'flex';
-            updateSignaturePreview(type);
+            const placeholder = document.getElementById(`placeholder-${type}`);
+            if (placeholder) placeholder.style.display = 'flex';
+            updateLivePreview();
+            showToast(`Tanda tangan ${type} berhasil dihapus`, 'Reset TTD', 'info');
         }
 
-        function updateSignaturePreview(type) {
-            const imgEl = document.getElementById(`preview-img-${type}`);
-            const emptyEl = document.getElementById(`preview-empty-${type}`);
-            
-            if (signatureData[type]) {
-                imgEl.src = signatureData[type];
-                imgEl.classList.remove('hidden');
-                if (emptyEl) emptyEl.classList.add('hidden');
-            } else {
-                imgEl.src = '';
-                imgEl.classList.add('hidden');
-                if (emptyEl) emptyEl.classList.remove('hidden');
-            }
-        }
-
-        // Live Document Preview Synchronization
-        function updateLivePreview() {
-            const getVal = (id) => document.getElementById(id)?.value || '';
-
-            const namaGuru = getVal('namaGuru') || 'I Nyoman Dwitika Adi Ana';
-            const nipGuru = getVal('nipGuru') || '198410182009021003';
-            const program = getVal('program') || 'PKL';
-            const nomorSurat = getVal('nomorSurat') || 'PKL-BelajarDUDI/01/IX/2026';
-            const rawTanggal = getVal('tanggalKegiatan');
-            const kota = getVal('kotaTerbit') || 'Karangasem';
-            const tujuan = getVal('tujuan') || 'Monitoring siswa PKL';
-            const namaDudi = getVal('namaDudi') || 'Atyana';
-            const alamatDudi = getVal('alamatDudi') || 'Jalan Karangasem-Denpasar, Candi Dasa, Manggis';
-            const catatan = getVal('catatan') || 'Monitoring dilakukan dengan baik, tanpa ada permasalahan siswa.';
-            const namaInstruktur = getVal('namaInstruktur') || 'I Nyoman Tombos';
-            const namaPembimbing = getVal('namaPembimbing') || namaGuru;
-
-            // Format No Surat
-            document.getElementById('formatNoSuratPreview').innerText = nomorSurat;
-            document.getElementById('doc-nomor').innerText = `Nomor: ${nomorSurat}`;
-
-            // Program Title
-            document.getElementById('preview-program-title').innerText = program === 'PKL' ? 'PKL (PRAKTIK KERJA LAPANGAN)' : 'BELAJAR DI DUDI';
-            document.getElementById('preview-program-detail').innerText = program === 'PKL' ? 'PKL (Praktik Kerja Lapangan)' : 'Belajar di DUDI';
-
-            // Format Indonesian Date & Day
-            let formattedDate = '21 September 2026';
-            let dayName = 'Senin';
-
-            if (rawTanggal) {
-                const dateObj = new Date(rawTanggal);
-                if (!isNaN(dateObj.getTime())) {
-                    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-                    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-                    dayName = days[dateObj.getDay()];
-                    formattedDate = `${dateObj.getDate()} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
-                }
-            }
-
-            document.getElementById('preview-hari').innerText = dayName;
-            document.getElementById('preview-tanggal-lengkap').innerText = formattedDate;
-            document.getElementById('preview-lokasi-tanggal').innerText = `${kota}, ${formattedDate}`;
-
-            // Sync other fields
-            document.getElementById('preview-tujuan-kegiatan').innerText = tujuan;
-            document.getElementById('preview-namaDudi').innerText = namaDudi;
-            document.getElementById('preview-alamatDudi').innerText = alamatDudi;
-            document.getElementById('preview-catatan').innerText = catatan;
-            document.getElementById('preview-namaInstruktur').innerText = namaInstruktur;
-            document.getElementById('preview-namaPembimbing').innerText = namaPembimbing;
-            document.getElementById('preview-nipGuru').innerText = `NIP. ${nipGuru}`;
-
-            updateSignaturePreview('instruktur');
-            updateSignaturePreview('pembimbing');
-            generateQRSealData(nomorSurat, namaDudi, rawTanggal);
-        }
-
-        // Frame and Seal Switcher Controls
-        function setDocFrame(type) {
-            const paper = document.getElementById('pdf-document-paper');
-            const corners = document.getElementById('doc-corner-ornaments');
-            if (!paper) return;
-
-            paper.className = 'a4-paper font-serif text-slate-900 relative overflow-hidden';
-            document.getElementById('btn-frame-ornament').className = 'px-2.5 py-1 rounded-lg font-semibold text-slate-400 hover:text-slate-200 transition-all';
-            document.getElementById('btn-frame-double').className = 'px-2.5 py-1 rounded-lg font-semibold text-slate-400 hover:text-slate-200 transition-all';
-            document.getElementById('btn-frame-none').className = 'px-2.5 py-1 rounded-lg font-semibold text-slate-400 hover:text-slate-200 transition-all';
-
-            if (type === 'ornament') {
-                paper.classList.add('paper-frame-ornament');
-                if (corners) corners.classList.remove('hidden');
-                document.getElementById('btn-frame-ornament').className = 'px-2.5 py-1 rounded-lg font-semibold bg-emerald-600 text-white transition-all';
-            } else if (type === 'double') {
-                paper.classList.add('paper-frame-double');
-                if (corners) corners.classList.add('hidden');
-                document.getElementById('btn-frame-double').className = 'px-2.5 py-1 rounded-lg font-semibold bg-emerald-600 text-white transition-all';
-            } else {
-                if (corners) corners.classList.add('hidden');
-                document.getElementById('btn-frame-none').className = 'px-2.5 py-1 rounded-lg font-semibold bg-emerald-600 text-white transition-all';
-            }
-        }
-
-        function toggleQRSeal() {
-            showQRSeal = !showQRSeal;
-            const container = document.getElementById('doc-qr-seal-container');
-            const label = document.getElementById('qr-seal-label');
-            if (container) {
-                if (showQRSeal) {
-                    container.classList.remove('hidden');
-                    if (label) label.innerText = 'Sembunyikan Cap & QR';
-                } else {
-                    container.classList.add('hidden');
-                    if (label) label.innerText = 'Tampilkan Cap & QR';
-                }
-            }
-        }
-
-        function generateQRSealData(noSurat, dudi, tgl) {
-            const qrElem = document.getElementById('qrcode-preview');
-            const hashElem = document.getElementById('qr-doc-hash');
-            if (!qrElem) return;
-
-            qrElem.innerHTML = '';
-            const payload = `VERIFIED-SMKN1BEBANDEM|NO:${noSurat}|DUDI:${dudi}|DATE:${tgl}`;
-            const refCode = `REF: BA-${dudi.substring(0,3).toUpperCase()}-${Date.now().toString().slice(-6)}`;
-            
-            if (hashElem) hashElem.innerText = refCode;
-
-            try {
-                if (typeof QRCode !== 'undefined') {
-                    qrCodeObj = new QRCode(qrElem, {
-                        text: payload,
-                        width: 46,
-                        height: 46,
-                        colorDark : "#0f172a",
-                        colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.M
-                    });
-                }
-            } catch (e) {
-                console.warn('QRCode generator loading:', e);
-            }
-        }
-
-        // Fill Sample Data
         function fillSampleData() {
-            document.getElementById('namaGuru').value = 'I Nyoman Dwitika Adi Ana';
-            document.getElementById('nipGuru').value = '198410182009021003';
-            document.getElementById('program').value = 'PKL';
-            document.getElementById('nomorSurat').value = 'PKL-BelajarDUDI/01/IX/2026';
-            document.getElementById('kotaTerbit').value = 'Karangasem';
-            document.getElementById('tujuan').value = 'Monitoring siswa PKL';
-            document.getElementById('namaDudi').value = 'Atyana';
-            document.getElementById('alamatDudi').value = 'Jalan Karangasem-Denpasar, Candi Dasa, Manggis';
-            document.getElementById('catatan').value = 'Monitoring berjalan sangat lancar. Siswa hadir tepat waktu, berpenampilan rapi, dan mampu mengikuti seluruh SOP pekerjaan dengan disiplin tinggi.';
-            document.getElementById('namaInstruktur').value = 'I Nyoman Tombos';
-            document.getElementById('namaPembimbing').value = 'I Nyoman Dwitika Adi Ana';
+            document.getElementById('namaGuru').value = "I Nyoman Dwitika Adi Ana, S.Pd.";
+            document.getElementById('nipGuru').value = "198410182009021003";
+            document.getElementById('program').value = "PKL";
+            document.getElementById('nomorSurat').value = "No. PKL-BelajarDUDI/01/IX/2026";
+            document.getElementById('tanggalKegiatan').value = "2026-09-21";
+            document.getElementById('kotaTerbit').value = "Karangasem";
+            document.getElementById('tujuan').value = "Monitoring siswa PKL siswa";
+            document.getElementById('namaDudi').value = "Atyana";
+            document.getElementById('alamatDudi').value = "Jalan Karangasem-Denpasar, Candi Dasa, Manggis";
+            document.getElementById('catatan').value = "Monitoring dilakukan dengan baik, tanpa ada permasalahan siswa.";
+            document.getElementById('namaInstruktur').value = "I Nyoman Tombos";
+            document.getElementById('namaPembimbing').value = "I Nyoman Dwitika Adi Ana, S.Pd.";
 
-            // Draw demo signatures on canvas
-            drawDemoSignature('instruktur');
-            drawDemoSignature('pembimbing');
+            drawSampleSignature('canvas-instruktur', 'instruktur');
+            drawSampleSignature('canvas-pembimbing', 'pembimbing');
 
             updateLivePreview();
+            showToast('Data contoh sampel berhasil diisikan ke formulir', 'Sampel Terisi', 'success');
         }
 
-        function drawDemoSignature(type) {
-            const canvas = document.getElementById(`canvas-${type}`);
+        function drawSampleSignature(canvasId, type) {
+            const canvas = document.getElementById(canvasId);
             if (!canvas) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            const w = rect.width > 0 ? rect.width : (canvas.offsetWidth || 400);
+            const h = rect.height > 0 ? rect.height : (canvas.offsetHeight || 150);
+
+            canvas.width = Math.max(1, Math.round(w * dpr));
+            canvas.height = Math.max(1, Math.round(h * dpr));
+
             const ctx = canvas.getContext('2d');
-            document.getElementById(`placeholder-${type}`).style.display = 'none';
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            ctx.lineWidth = 2.5;
+            ctx.lineWidth = 2.5 * dpr;
+            ctx.lineCap = 'round';
             ctx.strokeStyle = '#0284c7';
+
+            const cw = canvas.width;
+            const ch = canvas.height;
+
             ctx.beginPath();
-            ctx.moveTo(30, 80);
-            ctx.bezierCurveTo(80, 20, 120, 120, 180, 50);
-            ctx.bezierCurveTo(200, 30, 220, 100, 280, 70);
+            ctx.moveTo(cw * 0.15, ch * 0.5);
+            ctx.bezierCurveTo(cw * 0.25, ch * 0.15, cw * 0.35, ch * 0.85, cw * 0.5, ch * 0.4);
+            ctx.bezierCurveTo(cw * 0.6, ch * 0.1, cw * 0.75, ch * 0.75, cw * 0.85, ch * 0.5);
             ctx.stroke();
 
-            saveSignature(type);
+            const placeholder = document.getElementById(`placeholder-${type}`);
+            if (placeholder) placeholder.style.display = 'none';
+
+            saveSignatureData(canvas, type);
         }
 
-        // Reset Form
+        function getDayName(dateString) {
+            if (!dateString) return 'Senin';
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const d = new Date(dateString);
+            return isNaN(d.getDay()) ? 'Senin' : days[d.getDay()];
+        }
+
+        function updateLivePreview() {
+            const namaGuru = document.getElementById('namaGuru')?.value || 'I Nyoman Dwitika Adi Ana, S.Pd.';
+            const nipGuru = document.getElementById('nipGuru')?.value || '198410182009021003';
+            const programVal = document.getElementById('program')?.value || 'PKL';
+            const nomorSurat = document.getElementById('nomorSurat')?.value || 'No. PKL-BelajarDUDI/01/IX/2026';
+            const tanggalKegiatan = document.getElementById('tanggalKegiatan')?.value || '2026-09-21';
+            const kotaTerbit = document.getElementById('kotaTerbit')?.value || 'Karangasem';
+            const tujuan = document.getElementById('tujuan')?.value || 'Monitoring siswa PKL siswa';
+            const namaDudi = document.getElementById('namaDudi')?.value || 'Atyana';
+            const alamatDudi = document.getElementById('alamatDudi')?.value || 'Jalan Karangasem-Denpasar, Candi Dasa, Manggis';
+            const catatan = document.getElementById('catatan')?.value || 'Monitoring dilakukan dengan baik, tanpa ada permasalahan siswa.';
+            const namaInstruktur = document.getElementById('namaInstruktur')?.value || 'I Nyoman Tombos';
+            const namaPembimbing = document.getElementById('namaPembimbing')?.value || namaGuru;
+
+            const formatNoSuratPreview = document.getElementById('formatNoSuratPreview');
+            if (formatNoSuratPreview) formatNoSuratPreview.innerText = nomorSurat;
+
+            const docNomor = document.getElementById('doc-nomor');
+            if (docNomor) docNomor.innerText = nomorSurat;
+
+            const tglLengkap = formatIndonesianDate(tanggalKegiatan);
+            const hariNama = getDayName(tanggalKegiatan);
+
+            const previewHariTanggal = document.getElementById('preview-hari-tanggal');
+            if (previewHariTanggal) previewHariTanggal.innerText = `${hariNama}, ${tglLengkap}`;
+
+            const previewTujuan = document.getElementById('preview-tujuan-kegiatan');
+            if (previewTujuan) previewTujuan.innerText = tujuan;
+
+            const previewProgramTitle = document.getElementById('preview-program-title');
+            if (previewProgramTitle) previewProgramTitle.innerText = programVal === 'PKL' ? 'PRAKTIK KERJA LAPANGAN (PKL)' : 'BELAJAR DI DUDI';
+
+            const previewProgramBadge = document.getElementById('preview-program-badge');
+            if (previewProgramBadge) previewProgramBadge.innerText = programVal === 'PKL' ? 'PKL (Praktik Kerja Lapangan)' : 'BELAJAR DI DUDI';
+
+            const previewNamaDudi = document.getElementById('preview-namaDudi');
+            if (previewNamaDudi) previewNamaDudi.innerText = namaDudi;
+
+            const previewAlamatDudi = document.getElementById('preview-alamatDudi');
+            if (previewAlamatDudi) previewAlamatDudi.innerText = alamatDudi;
+
+            const previewCatatan = document.getElementById('preview-catatan');
+            if (previewCatatan) previewCatatan.innerText = catatan;
+
+            const previewNamaInstruktur = document.getElementById('preview-namaInstruktur');
+            if (previewNamaInstruktur) previewNamaInstruktur.innerText = namaInstruktur;
+
+            const previewLokasiTanggal = document.getElementById('preview-lokasi-tanggal');
+            if (previewLokasiTanggal) previewLokasiTanggal.innerText = `${kotaTerbit}, ${tglLengkap}`;
+
+            const previewNamaPembimbing = document.getElementById('preview-namaPembimbing');
+            if (previewNamaPembimbing) previewNamaPembimbing.innerText = namaPembimbing;
+
+            const previewNipGuru = document.getElementById('preview-nipGuru');
+            if (previewNipGuru) previewNipGuru.innerText = nipGuru ? `NIP. ${nipGuru}` : '';
+
+            // Update Dynamic QR Code & Stamp Year
+            const previewQrCode = document.getElementById('preview-qr-code');
+            if (previewQrCode) {
+                const qrContent = encodeURIComponent(`SMKN1BEBANDEM|${nomorSurat}|${namaDudi}|${tanggalKegiatan}`);
+                previewQrCode.src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${qrContent}`;
+            }
+
+            const previewDocHash = document.getElementById('preview-doc-hash');
+            if (previewDocHash) {
+                const hashVal = Math.abs((nomorSurat + namaDudi).split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0));
+                previewDocHash.innerText = `BA-2026-${hashVal.toString().slice(0, 5)}`;
+            }
+
+            const stampYear = document.getElementById('stamp-year');
+            if (stampYear && tanggalKegiatan) {
+                stampYear.innerText = tanggalKegiatan.split('-')[0] || '2026';
+            }
+
+            // Signature previews
+            const imgInstruktur = document.getElementById('preview-img-instruktur');
+            const emptyInstruktur = document.getElementById('preview-empty-instruktur');
+            if (signatureData.instruktur) {
+                imgInstruktur.src = signatureData.instruktur;
+                imgInstruktur.classList.remove('hidden');
+                if (emptyInstruktur) emptyInstruktur.classList.add('hidden');
+            } else {
+                imgInstruktur.classList.add('hidden');
+                if (emptyInstruktur) emptyInstruktur.classList.remove('hidden');
+            }
+
+            const imgPembimbing = document.getElementById('preview-img-pembimbing');
+            const emptyPembimbing = document.getElementById('preview-empty-pembimbing');
+            if (signatureData.pembimbing) {
+                imgPembimbing.src = signatureData.pembimbing;
+                imgPembimbing.classList.remove('hidden');
+                if (emptyPembimbing) emptyPembimbing.classList.add('hidden');
+            } else {
+                imgPembimbing.classList.add('hidden');
+                if (emptyPembimbing) emptyPembimbing.classList.remove('hidden');
+            }
+        }
+
         function resetForm() {
             document.getElementById('beritaAcaraForm').reset();
             clearSignature('instruktur');
             clearSignature('pembimbing');
             updateLivePreview();
+            showToast('Formulir berhasil dikosongkan kembali', 'Form Reset', 'info');
         }
 
-        // Handle Save Form
-        function handleKirim() {
-            updateLivePreview();
-            
-            const record = {
-                id: Date.now(),
-                tanggal: document.getElementById('tanggalKegiatan').value,
-                program: document.getElementById('program').value,
-                nomorSurat: document.getElementById('nomorSurat').value,
-                namaDudi: document.getElementById('namaDudi').value,
-                alamatDudi: document.getElementById('alamatDudi').value,
-                namaGuru: document.getElementById('namaGuru').value,
-                nipGuru: document.getElementById('nipGuru').value,
-                tujuan: document.getElementById('tujuan').value,
-                catatan: document.getElementById('catatan').value,
-                namaInstruktur: document.getElementById('namaInstruktur').value,
-                namaPembimbing: document.getElementById('namaPembimbing').value,
-                sigInstruktur: signatureData.instruktur,
-                sigPembimbing: signatureData.pembimbing
-            };
-
-            historyRecords.unshift(record);
-            saveHistoryToStorage();
-            renderHistoryTable();
-
-            document.getElementById('modal-dudi').innerText = record.namaDudi;
-            document.getElementById('modal-nosurat').innerText = record.nomorSurat;
-            document.getElementById('modalSuccess').classList.remove('hidden');
-        }
-
-        // PDF & Image Generators
         async function downloadAsImage() {
             updateLivePreview();
             const element = document.getElementById('pdf-document-paper');
@@ -1290,8 +1197,9 @@
 
             try {
                 if (typeof html2canvas !== 'undefined') {
+                    showToast('Mengolah gambar dokumen A4 resolusi tinggi...', 'Proses Unduh', 'info');
                     const canvas = await html2canvas(element, {
-                        scale: 2,
+                        scale: 2.5,
                         useCORS: true,
                         backgroundColor: '#ffffff'
                     });
@@ -1300,41 +1208,16 @@
                     link.download = `Berita_Acara_PKL_${Date.now()}.png`;
                     link.href = image;
                     link.click();
+                    showToast('Gambar Berita Acara berhasil diunduh (PNG)!', 'Sukses', 'success');
                 } else {
-                    window.print();
+                    showToast('Pustaka pengolah gambar sedang disiapkan, coba lagi sebentar.', 'Tunggu', 'warning');
                 }
             } catch (err) {
                 console.error('Failed to export image:', err);
-                window.print();
+                showToast('Gagal mengunduh gambar.', 'Peringatan', 'warning');
             }
         }
 
-        async function generateAndPrintPDF() {
-            updateLivePreview();
-            const element = document.getElementById('pdf-document-paper');
-            if (!element) return;
-
-            const opt = {
-                margin:       [8, 10, 10, 10],
-                filename:     `Berita_Acara_PKL_${Date.now()}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, logging: false },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            try {
-                if (typeof html2pdf !== 'undefined') {
-                    await html2pdf().set(opt).from(element).save();
-                } else {
-                    window.print();
-                }
-            } catch (err) {
-                console.warn('PDF fallback to print:', err);
-                window.print();
-            }
-        }
-
-        // Storage Operations
         function saveHistoryToStorage() {
             try {
                 localStorage.setItem('beritaAcaraHistory', JSON.stringify(historyRecords));
@@ -1353,12 +1236,9 @@
                     const countEl = document.getElementById('history-count');
                     if (countEl) countEl.innerText = historyRecords.length;
                     renderHistoryTable();
-                } else {
-                    renderHistoryTable();
                 }
             } catch (e) {
                 console.error('Failed to load history:', e);
-                renderHistoryTable();
             }
         }
 
@@ -1369,21 +1249,8 @@
             if (historyRecords.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="5" class="p-8 text-center text-slate-500">
-                            <div class="flex flex-col items-center justify-center gap-3">
-                                <svg width="64" height="64" viewBox="0 0 100 100" fill="none" class="text-slate-700">
-                                    <rect x="25" y="15" width="50" height="70" rx="6" stroke="currentColor" stroke-width="3" fill="none"/>
-                                    <line x1="35" y1="30" x2="65" y2="30" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-                                    <line x1="35" y1="42" x2="60" y2="42" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-                                    <line x1="35" y1="54" x2="50" y2="54" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-                                    <circle cx="65" cy="65" r="14" fill="#0f172a" stroke="currentColor" stroke-width="3"/>
-                                    <line x1="61" y1="65" x2="69" y2="65" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-                                </svg>
-                                <div>
-                                    <p class="text-sm font-semibold text-slate-400">Belum Ada Riwayat Berita Acara</p>
-                                    <p class="text-xs text-slate-600 mt-0.5">Silakan isi formulir dan simpan data untuk pertama kali.</p>
-                                </div>
-                            </div>
+                        <td colspan="5" class="p-6 text-center text-slate-500 italic">
+                            Belum ada riwayat berita acara tersimpan.
                         </td>
                     </tr>
                 `;
@@ -1398,7 +1265,7 @@
                     <td class="p-3 text-xs text-slate-300">${item.namaGuru || '-'}</td>
                     <td class="p-3 text-center">
                         <div class="flex items-center justify-center gap-2">
-                            <button onclick="loadRecordToForm(${item.id})" class="px-2.5 py-1 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-700/50 rounded text-xs transition-all flex items-center gap-1">
+                            <button onclick="loadRecordToForm(${item.id})" class="px-2.5 py-1 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-700/50 rounded text-xs transition-all">
                                 <i class="fa-solid fa-eye"></i> Lihat
                             </button>
                             <button onclick="deleteRecord(${item.id})" class="px-2 py-1 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-700/50 rounded text-xs transition-all">
@@ -1414,17 +1281,17 @@
             const item = historyRecords.find(r => r.id === id);
             if (!item) return;
 
-            document.getElementById('namaGuru').value = item.namaGuru || '';
-            document.getElementById('nipGuru').value = item.nipGuru || '';
-            document.getElementById('program').value = item.program || 'PKL';
-            document.getElementById('nomorSurat').value = item.nomorSurat || '';
-            document.getElementById('tanggalKegiatan').value = item.tanggal || '';
-            document.getElementById('tujuan').value = item.tujuan || '';
-            document.getElementById('namaDudi').value = item.namaDudi || '';
-            document.getElementById('alamatDudi').value = item.alamatDudi || '';
-            document.getElementById('catatan').value = item.catatan || '';
-            document.getElementById('namaInstruktur').value = item.namaInstruktur || '';
-            document.getElementById('namaPembimbing').value = item.namaPembimbing || '';
+            document.getElementById('namaGuru').value = item.namaGuru;
+            if (item.nipGuru) document.getElementById('nipGuru').value = item.nipGuru;
+            document.getElementById('program').value = item.program;
+            document.getElementById('nomorSurat').value = item.nomorSurat;
+            document.getElementById('tanggalKegiatan').value = item.tanggal;
+            document.getElementById('tujuan').value = item.tujuan;
+            document.getElementById('namaDudi').value = item.namaDudi;
+            document.getElementById('alamatDudi').value = item.alamatDudi;
+            document.getElementById('catatan').value = item.catatan;
+            document.getElementById('namaInstruktur').value = item.namaInstruktur;
+            document.getElementById('namaPembimbing').value = item.namaPembimbing;
 
             signatureData.instruktur = item.sigInstruktur;
             signatureData.pembimbing = item.sigPembimbing;
@@ -1442,6 +1309,35 @@
         function closeModal() {
             document.getElementById('modalSuccess').classList.add('hidden');
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initCanvas('canvas-instruktur', 'instruktur');
+            initCanvas('canvas-pembimbing', 'pembimbing');
+
+            const namaGuruInput = document.getElementById('namaGuru');
+            const namaPembimbingInput = document.getElementById('namaPembimbing');
+            if (namaGuruInput && namaPembimbingInput) {
+                namaGuruInput.addEventListener('input', (e) => {
+                    if (!namaPembimbingInput.dataset.userEdited) {
+                        namaPembimbingInput.value = e.target.value;
+                    }
+                    updateLivePreview();
+                });
+                namaPembimbingInput.addEventListener('input', () => {
+                    namaPembimbingInput.dataset.userEdited = 'true';
+                    updateLivePreview();
+                });
+            }
+
+            const formInputs = document.querySelectorAll('#beritaAcaraForm input, #beritaAcaraForm select, #beritaAcaraForm textarea');
+            formInputs.forEach(input => {
+                input.addEventListener('input', updateLivePreview);
+                input.addEventListener('change', updateLivePreview);
+            });
+
+            loadHistoryFromStorage();
+            fillSampleData();
+        });
     </script>
 </body>
 </html>
